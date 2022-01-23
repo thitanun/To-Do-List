@@ -43,7 +43,6 @@ class userEdit:
                 temp.append(self.uDict)
             with open ("user.json","w") as f:
                 json.dump(data,f,indent=4)  
-            # self.add_user()
             tkinter.messagebox.showinfo(title="Success",message="Register success") 
 
 
@@ -76,25 +75,6 @@ class userEdit:
         else:
             todoMain.main_page.deiconify()
             todoMain.MainPage.log_frame.withdraw()
-
-
-
-    # @classmethod 
-    # def add_user(self):
-    #     f = open('user.json')
-    #     data = json.load(f)
-    #     print(data)
-    #     f.close() 
-    #     todoMain.MainPage.name_user = []
-    #     for v_data in data.values():
-    #         for v_vdata in v_data:
-    #             print(v_vdata)
-    #             user = v_vdata['Username']
-    #             todoMain.MainPage.name_user.append(user)
-    #     print(todoMain.MainPage.name_user)     
-    #     self.click_user = StringVar()
-    #     self.click_user.set(todoMain.MainPage.name_user[0])
-    #     return self.click_user ,todoMain.MainPage.name_user
 
 
     #command back to login page

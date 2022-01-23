@@ -4,9 +4,12 @@ import tkinter.messagebox
 from tkinter import filedialog
 from tkcalendar import *
 from tkcalendar import DateEntry
+from PIL import Image,ImageTk
 from datetime import *
+
 import json
 import todoMain
+
 # from todoMain import m 
 
 class dataEdit:
@@ -22,41 +25,48 @@ class dataEdit:
 
     @classmethod 
     def changeWindow(self):
-
-        for i in reversed(todoMain.MainPage.listbox_list.curselection()):
-            aList = todoMain.MainPage.listbox_list.get(i)
-            x = str(aList).split(",")
-            self.oldList = x[0]
-
-        self.editWin = Tk()
-        self.editWin.title("Edit")
-        self.editWin.geometry("500x350")
         
-        self.lb_editWin = Label(self.editWin, text='Reminder', font=('Calibri', 14))
-        self.lb_editWin.place(relx=0.02, rely=0.03)
+        if todoMain.MainPage.listbox_list.curselection():
+            for i in reversed(todoMain.MainPage.listbox_list.curselection()):
+                aList = todoMain.MainPage.listbox_list.get(i)
+                x = str(aList).split(",")
+                self.oldList = x[0]
 
-        self.newtxt = StringVar(self.editWin)
+            self.editWin = Toplevel()
+            self.editWin.title("Edit")
+            self.editWin.geometry("500x350")
+            self.editWin.config(bg = "#6fa0c6")
+            
+            self.lb_editWin = Label(self.editWin, text='Reminder', font=('Calibri', 14), bg="#6fa0c6")
+            self.lb_editWin.place(relx=0.02, rely=0.03)
 
-        self.old_List = Entry(self.editWin, textvariable=self.newtxt)
-        self.old_List.place(relx=0.18, rely=0.03, height=30, width=330)
-        self.newtxt.set(self.oldList)
-      
-        self.newcal = Calendar(self.editWin, date_pattern = "dd/mm/y")
-        self.newcal.place(relx=0.25, rely=0.18)
+            self.newtxt = StringVar(self.editWin)
 
-        self.newspinhour = Spinbox(self.editWin, from_= 0, to = 24)
-        self.newspinhour.place(relx=0.38, rely=0.8, height=20, width=30)
+            self.old_List = Entry(self.editWin, textvariable=self.newtxt)
+            self.old_List.place(relx=0.18, rely=0.03, height=30, width=330)
+            self.newtxt.set(self.oldList)
         
-        self.newspinminutes = Spinbox(self.editWin, from_= 0, to = 59)
-        self.newspinminutes.place(relx=0.45, rely=0.8, height=20, width=30)
+            self.newcal = Calendar(self.editWin, date_pattern = "dd/mm/y")
+            self.newcal.place(relx=0.25, rely=0.18)
 
-        self.newspinseconds = Spinbox(self.editWin, from_= 0, to = 59)
-        self.newspinseconds.place(relx=0.52, rely=0.8, height=20, width=30)
+            self.newspinhour = Spinbox(self.editWin, from_= 0, to = 24)
+            self.newspinhour.place(relx=0.38, rely=0.8, height=20, width=30)
+            
+            self.newspinminutes = Spinbox(self.editWin, from_= 0, to = 59)
+            self.newspinminutes.place(relx=0.45, rely=0.8, height=20, width=30)
 
-        self.bt_addEdit = Button(self.editWin,text='Edit',font=('Calibri', 15),relief=RAISED,cursor="heart", command=self.editList)
-        self.bt_addEdit.place(relx=0.85, rely=0.03, width=60, height=28)
+            self.newspinseconds = Spinbox(self.editWin, from_= 0, to = 59)
+            self.newspinseconds.place(relx=0.52, rely=0.8, height=20, width=30)
 
-        self.editWin.mainloop()
+            self.bt_addEdit = Image.open('todoPic/edit.png')
+            self.resize_addEdit = self.bt_addEdit.resize((70,31),Image.ANTIALIAS)
+            self.bt_newaddEdit = ImageTk.PhotoImage(self.resize_addEdit)
+            self.bttn_addEdit = Button(self.editWin,image = self.bt_newaddEdit,cursor="heart", bg='#6fa0c6', command = self.editList , borderwidth=0)
+            self.bttn_addEdit.place(relx=0.85, rely=0.03, width=70, height=30)
+
+            self.editWin.mainloop()
+        else:
+            tkinter.messagebox.showwarning(title="Warning!",message="Please Select Reminder")
 
 
     @classmethod 
@@ -101,7 +111,7 @@ class dataEdit:
                         b.append(c)
             self.databin[self.todo] = b
         else:
-            self.databin[self.todo] = vBin 
+            self.databin[self.todo] = vBin
 
         binString = json.dumps(self.databin)
         binFile = open("bin.json", "w")
@@ -118,55 +128,58 @@ class dataEdit:
 
     @classmethod
     def editList(self):
-        self.todo = self.User()
-        newList = self.newtxt.get()
-        newDate = self.newcal.get_date()           
-        newHour = self.newspinhour.get()  
-        newMinute = self.newspinminutes.get()
-        newSecond = self.newspinseconds.get()
-        if newList == "" :
-            tkinter.messagebox.showwarning(title="Warning!",message="Please Enter Reminder")
-        elif int(newMinute) > 59 or int(newMinute) < 0 or int(newSecond) > 59 or int(newSecond) < 0 or int(newHour) < 0 or int(newHour) > 23:
-            tkinter.messagebox.showwarning(title="Warning!",message="Please enter the correct time")
-        else:
-            if int(newHour) < 10:
-                newHour = '0' + newHour
-        
-            if int(newMinute) < 10:
-                newMinute = '0' + newMinute
+        if todoMain.MainPage.listbox_list.curselection():
+            self.todo = self.User()
+            newList = self.newtxt.get()
+            newDate = self.newcal.get_date()           
+            newHour = self.newspinhour.get()  
+            newMinute = self.newspinminutes.get()
+            newSecond = self.newspinseconds.get()
+            if newList == "" :
+                tkinter.messagebox.showwarning(title="Warning!",message="Please Enter Reminder")
+            elif int(newMinute) > 59 or int(newMinute) < 0 or int(newSecond) > 59 or int(newSecond) < 0 or int(newHour) < 0 or int(newHour) > 23:
+                tkinter.messagebox.showwarning(title="Warning!",message="Please enter the correct time")
+            else:
+                if int(newHour) < 10:
+                    newHour = '0' + newHour
             
-            if int(newSecond) < 10:
-                newSecond = '0' + newSecond
+                if int(newMinute) < 10:
+                    newMinute = '0' + newMinute
+                
+                if int(newSecond) < 10:
+                    newSecond = '0' + newSecond
 
-            #r = []
-            self.f = open('data.json')
-            self.data = json.load(self.f)
-            # print(self.data)
-            for v,a in self.data.items():
-                #r.append(v)
-                if self.todo == v:
-                    dList = a
-                    #print('dlist=',dList)
-            #print('r=',r)
-            for item in reversed(todoMain.MainPage.listbox_list.curselection()):
-                #print('item',item)
-                #print('dList[item]=',dList[item])
-                '''dList.remove(dList[item])
-                print('remove dList=',dList)'''
-                #dList.append({'List Name': newList, 'Date' : newDate, 'hour' : newHour, 'minutes' : newMinute, 'seconds' : newSecond})
-                dList[item] = {'List Name': newList, 'Date' : newDate, 'hour' : newHour, 'minutes' : newMinute, 'seconds' : newSecond}
-                print('add dList=',dList)
-                self.data[self.todo] = dList
-                print('self.data=',self.data)
+                #r = []
+                self.f = open('data.json')
+                self.data = json.load(self.f)
+                # print(self.data)
+                for v,a in self.data.items():
+                    #r.append(v)
+                    if self.todo == v:
+                        dList = a
+                        #print('dlist=',dList)
+                #print('r=',r)
+                for item in reversed(todoMain.MainPage.listbox_list.curselection()):
+                    #print('item',item)
+                    #print('dList[item]=',dList[item])
+                    '''dList.remove(dList[item])
+                    print('remove dList=',dList)'''
+                    #dList.append({'List Name': newList, 'Date' : newDate, 'hour' : newHour, 'minutes' : newMinute, 'seconds' : newSecond})
+                    dList[item] = {'List Name': newList, 'Date' : newDate, 'hour' : newHour, 'minutes' : newMinute, 'seconds' : newSecond}
+                    print('add dList=',dList)
+                    self.data[self.todo] = dList
+                    print('self.data=',self.data)
 
-                todoMain.MainPage.listbox_list.delete(item)
-                todoMain.MainPage.listbox_list.insert(item, newList +", "+ newDate + " "+ newHour+":"+ newMinute +":"+ newSecond)
+                    todoMain.MainPage.listbox_list.delete(item)
+                    todoMain.MainPage.listbox_list.insert(item, newList +", "+ newDate + " "+ newHour+":"+ newMinute +":"+ newSecond)
 
-                jsonString = json.dumps(self.data)
-                jsonFile = open("data.json", "w")
-                jsonFile.write(jsonString)
-                jsonFile.close()
-            self.editWin.destroy()
+                    jsonString = json.dumps(self.data)
+                    jsonFile = open("data.json", "w")
+                    jsonFile.write(jsonString)
+                    jsonFile.close()
+                self.editWin.destroy()
+        else:
+            tkinter.messagebox.showwarning(title="Warning!",message="Please Select Reminder")
 
 
     @classmethod
@@ -276,20 +289,28 @@ class dataEdit:
     # #make sure to delete
     def makeSure(self):
         if todoMain.MainPage.listbox_list.curselection():
-            self.sureWin = Tk()
+            self.sureWin = Toplevel()
             self.sureWin.title("Are you sure?")
-            self.sureWin.geometry("350x70")
+            self.sureWin.geometry("350x90")
+            self.sureWin.config(bg="#6fa0c6")
         
-            self.lb_editWin = Label(self.sureWin, text='Do you want to delete this REMINDER?', font=('Calibri', 14))
-            self.lb_editWin.place(relx=0.06, rely=0.03)
+            self.lb_delWin = Label(self.sureWin, text='Do you want to delete this REMINDER?', font=('Calibri', 14))
+            self.lb_delWin.place(relx=0.06, rely=0.03)
+            self.lb_delWin.config(bg="#6fa0c6")
 
         # tkinter.messagebox.askquestion(title="Warning!",message="Please Enter Reminder",command = self.deleteList)
+            
+            self.bt_suredel = Image.open('todoPic/yes.png')
+            self.resize_suredel = self.bt_suredel.resize((70,31),Image.ANTIALIAS)
+            self.bt_newsuredel = ImageTk.PhotoImage(self.resize_suredel)
+            self.bttn_suredel = Button(self.sureWin,image = self.bt_newsuredel,cursor="heart", bg='#6fa0c6', command = self.deleteList , borderwidth=0)
+            self.bttn_suredel.place(relx=0.28, rely=0.5, width=70, height=30)
 
-            self.bt_sureEdit = Button(self.sureWin,text='Yes',font=('Calibri', 15),relief=RAISED,cursor="heart", command=self.deleteList)
-            self.bt_sureEdit.place(relx=0.3, rely=0.5, width=60, height=28)
-
-            self.bt_notEdit = Button(self.sureWin,text='No',font=('Calibri', 15),relief=RAISED,cursor="heart", command = self.notDel)
-            self.bt_notEdit.place(relx=0.5, rely=0.5, width=60, height=28)
+            self.bt_notdel = Image.open('todoPic/no.png')
+            self.resize_notdel = self.bt_notdel.resize((70,31),Image.ANTIALIAS)
+            self.bt_newnotdel = ImageTk.PhotoImage(self.resize_notdel)
+            self.bttn_notdel = Button(self.sureWin,image = self.bt_newnotdel,cursor="heart", bg='#6fa0c6', command = self.notDel , borderwidth=0)
+            self.bttn_notdel.place(relx=0.52, rely=0.5, width=70, height=30)
 
             self.sureWin.mainloop()
 
@@ -300,18 +321,26 @@ class dataEdit:
     @classmethod    
     # #make sure to delete all
     def makeallSure(self):
-        self.sureallWin = Tk()
+        self.sureallWin = Toplevel()
         self.sureallWin.title("Are you sure?")
-        self.sureallWin.geometry("350x100")
+        self.sureallWin.geometry("350x90")
+        self.sureallWin.config(bg="#6fa0c6")
         
-        self.lb_editallWin = Label(self.sureallWin, text='Do you want to delete all REMINDER?', font=('Calibri', 14))
-        self.lb_editallWin.place(relx=0.06, rely=0.03)
+        self.lb_delallWin = Label(self.sureallWin, text='Do you want to delete all REMINDER?', font=('Calibri', 14))
+        self.lb_delallWin.place(relx=0.06, rely=0.03)
+        self.lb_delallWin.config(bg="#6fa0c6")
 
-        self.bt_sureallEdit = Button(self.sureallWin,text='Yes',font=('Calibri', 15),relief=RAISED,cursor="heart", command=self.deleteAll)
-        self.bt_sureallEdit.place(relx=0.3, rely=0.5, width=60, height=28)
+        self.bt_surealldel = Image.open('todoPic/yes.png')
+        self.resize_surealldel = self.bt_surealldel.resize((70,31),Image.ANTIALIAS)
+        self.bt_newsurealldel = ImageTk.PhotoImage(self.resize_surealldel)
+        self.bttn_surealldel = Button(self.sureallWin,image = self.bt_newsurealldel,cursor="heart", bg='#6fa0c6', command = self.deleteAll , borderwidth=0)
+        self.bttn_surealldel.place(relx=0.28, rely=0.5, width=70, height=30)
 
-        self.bt_notallEdit = Button(self.sureallWin,text='No',font=('Calibri', 15),relief=RAISED,cursor="heart", command = self.notallDel)
-        self.bt_notallEdit.place(relx=0.5, rely=0.5, width=60, height=28)
+        self.bt_surenotalldel = Image.open('todoPic/no.png')
+        self.resize_surenotalldel = self.bt_surenotalldel.resize((70,31),Image.ANTIALIAS)
+        self.bt_newsurenotalldel = ImageTk.PhotoImage(self.resize_surenotalldel)
+        self.bttn_surenotalldel = Button(self.sureallWin,image = self.bt_newsurenotalldel,cursor="heart", bg='#6fa0c6', command = self.notallDel , borderwidth=0)
+        self.bttn_surenotalldel.place(relx=0.52, rely=0.5, width=70, height=30)
 
         self.sureallWin.mainloop()
 
@@ -363,11 +392,12 @@ class dataEdit:
     @classmethod
     def Addlist(self):
         #todoMain.MainPage.listbox_list = listbox
-        self.addlist = Tk()
+        self.addlist = Toplevel()
         self.addlist.title("New List")
         self.addlist.geometry("500x350")
+        self.addlist.config(bg="#6fa0c6")
 
-        self.lb_listname = Label(self.addlist, text='Reminder', font=('Calibri', 14))
+        self.lb_listname = Label(self.addlist, text='Reminder', font=('Calibri', 14), bg="#6fa0c6")
         self.lb_listname.place(relx=0.02, rely=0.03)
 
         self.txt = StringVar(self.addlist)
@@ -375,8 +405,14 @@ class dataEdit:
         self.myText = Entry(self.addlist, textvariable=self.txt)
         self.myText.place(relx=0.18, rely=0.03, height=30, width=330)
 
-        self.bt_addDone = Button(self.addlist,text='Done',font=('Calibri', 15),relief=RAISED,cursor="heart",command= self.showmessage)
-        self.bt_addDone.place(relx=0.85, rely=0.03, width=60, height=28)
+        self.bt_addDone = Image.open('todoPic/done.png')
+        self.resize_addDone = self.bt_addDone.resize((70,31),Image.ANTIALIAS)
+        self.bt_newaddDone = ImageTk.PhotoImage(self.resize_addDone)
+        self.bttn_newaddDone= Button(self.addlist,image = self.bt_newaddDone,cursor="heart", bg='#6fa0c6', command = self.showmessage, borderwidth=0)
+        self.bttn_newaddDone.place(relx=0.85, rely=0.03, width=70, height=30)
+
+        # self.bt_addDone = Button(self.addlist,text='Done',font=('Calibri', 15),relief=RAISED,cursor="heart",command= self.showmessage)
+        # self.bt_addDone.place(relx=0.85, rely=0.03, width=60, height=28)
 
         self.cal = Calendar(self.addlist, date_pattern = "dd/mm/y")
         self.cal.place(relx=0.25, rely=0.18)
@@ -447,19 +483,27 @@ class dataEdit:
     @classmethod
     def sureRestore(self):
         if self.listbox_winBin.curselection():
-            self.sureRe = Tk()
+            self.sureRe = Toplevel()
             self.sureRe.title("Are you sure?")
-            self.sureRe.geometry("350x70")
+            self.sureRe.geometry("350x85")
+            self.sureRe.config(bg="#6fa0c6")
         
-            self.lb_restore = Label(self.sureRe, text='Do you want to restore this REMINDER?', font=('Calibri', 14))
+            self.lb_restore = Label(self.sureRe, text='Do you want to restore this REMINDER?', font=('Calibri', 14), bg="#6fa0c6")
             self.lb_restore.place(relx=0.06, rely=0.03)
 
             # tkinter.messagebox.askquestion(title="Warning!",message="Please Enter Reminder",command = self.deleteList)
-            self.bt_surerestore = Button(self.sureRe,text='Yes',font=('Calibri', 15),relief=RAISED,cursor="heart", command=self.restoreList)
-            self.bt_surerestore.place(relx=0.3, rely=0.5, width=60, height=28)
+            self.bt_surerestore = Image.open('todoPic/yes.png')
+            self.resize_surerestore = self.bt_surerestore.resize((70,31),Image.ANTIALIAS)
+            self.bt_newsurerestoret = ImageTk.PhotoImage(self.resize_surerestore)
+            self.bttn_surerestore = Button(self.sureRe,image = self.bt_newsurerestoret,cursor="heart", bg='#6fa0c6', command = self.restoreList , borderwidth=0)
+            self.bttn_surerestore.place(relx=0.27, rely=0.5, width=70, height=30)
 
-            self.bt_notrestore = Button(self.sureRe,text='No',font=('Calibri', 15),relief=RAISED,cursor="heart", command = self.notRestore)
-            self.bt_notrestore.place(relx=0.5, rely=0.5, width=60, height=28)
+            self.bt_notrestore= Image.open('todoPic/no.png')
+            self.resize_notrestore = self.bt_notrestore.resize((70,31),Image.ANTIALIAS)
+            self.bt_newnotrestore = ImageTk.PhotoImage(self.resize_notrestore)
+            self.bttn_notrestore = Button(self.sureRe,image = self.bt_newnotrestore,cursor="heart", bg='#6fa0c6', command = self.notRestore , borderwidth=0)
+            self.bttn_notrestore.place(relx=0.53, rely=0.5, width=70, height=30)
+
             self.sureRe.mainloop()
 
         else:
@@ -467,19 +511,26 @@ class dataEdit:
 
     @classmethod
     def sureallRestore(self):
-        self.sureallRe = Tk()
+        self.sureallRe = Toplevel()
         self.sureallRe.title("Are you sure?")
         self.sureallRe.geometry("350x70")
+        self.sureallRe.config(bg="#6fa0c6")
     
-        self.lb_restore = Label(self.sureallRe, text='Do you want to restore all REMINDER?', font=('Calibri', 14))
+        self.lb_restore = Label(self.sureallRe, text='Do you want to restore all REMINDER?', font=('Calibri', 14), bg="#6fa0c6")
         self.lb_restore.place(relx=0.06, rely=0.03)
 
         # tkinter.messagebox.askquestion(title="Warning!",message="Please Enter Reminder",command = self.deleteList)
-        self.bt_sureallRe = Button(self.sureallRe,text='Yes',font=('Calibri', 15),relief=RAISED,cursor="heart", command = self.restoreallList)
-        self.bt_sureallRe.place(relx=0.3, rely=0.5, width=60, height=28)
+        self.bt_sureallRe = Image.open('todoPic/yes.png')
+        self.resize_sureallRe = self.bt_sureallRe.resize((70,31),Image.ANTIALIAS)
+        self.bt_newsureallRe = ImageTk.PhotoImage(self.resize_sureallRe)
+        self.bttn_sureallRe = Button(self.sureallRe,image = self.bt_newsureallRe,cursor="heart", bg='#6fa0c6', command = self.restoreallList , borderwidth=0)
+        self.bttn_sureallRe.place(relx=0.28, rely=0.5, width=70, height=30)
 
-        self.bt_notallRe = Button(self.sureallRe,text='No',font=('Calibri', 15),relief=RAISED,cursor="heart", command = self.notallRestore)
-        self.bt_notallRe.place(relx=0.5, rely=0.5, width=60, height=28)
+        self.bt_notallRe = Image.open('todoPic/no.png')
+        self.resize_notallRe = self.bt_notallRe.resize((70,31),Image.ANTIALIAS)
+        self.bt_newnotallRe = ImageTk.PhotoImage(self.resize_notallRe)
+        self.bttn_notallRe = Button(self.sureallRe,image = self.bt_newnotallRe,cursor="heart", bg='#6fa0c6', command = self.notallRestore , borderwidth=0)
+        self.bttn_notallRe.place(relx=0.52, rely=0.5, width=70, height=30)
         self.sureallRe.mainloop()
 
 
@@ -669,20 +720,22 @@ class dataEdit:
                     #print('index',index)
         dict_new = {} 
         index.sort(key = lambda date: datetime.strptime(date, '%d/%m/%Y%H:%M:%S'))
-        print(index)
+        #print('index',index)
         for i in range(len(index)):          
             for c,d in self.data.items():
                 if self.todo == c:
                     for v in d:
-                        print('i',i)
-                        print(v['Date'])
+                        # print(v)
+                        #print('i',i)
+                        #print(v['Date'])
                         if v['Date']+v['hour']+":"+v['minutes'] +":"+ v['seconds'] == index[i]:
-                            listd.append(v)
-                    dict_new[c] = listd
-                    print('dict_new v',dict_new)  
-                # dict_new[c] = self.data[c]
-                # print('dict_new c',dict_new)  
-        jsonString = json.dumps(dict_new)
+                            if len(listd) < len(index):
+                                #print('aaaaaaaaaaaaaaaaa',v)
+                                listd.append(v)
+                    # print(listd)
+        self.data[self.todo] = listd
+        #print(self.data)
+        jsonString = json.dumps(self.data)
         jsonFile = open("data.json", "w")
         jsonFile.write(jsonString)
         jsonFile.close()
@@ -699,8 +752,9 @@ class dataEdit:
         self.todaylist= Frame(maintoday)
         self.todaylist.pack()        
         self.todaylist.place(relx=0.03, rely=0.01)
+        self.todaylist.config(bg="#6fa0c6")
         
-        self.name_today = Label(self.todaylist, text='to-do list', font=('Calibri', 14))
+        self.name_today = Label(self.todaylist, text='to-do list', font=('Calibri', 14), bg="#6fa0c6")
         self.name_today .place(relx=0.02, rely=0.01)
 
         '''self.bt_addOk = Button(maintoday,text='Ok',font=('Calibri', 15),relief=RAISED,cursor="heart")
@@ -708,7 +762,7 @@ class dataEdit:
 
         self.today_scrollbar = Scrollbar(self.todaylist, orient=VERTICAL)
         self.today_scrollbar.pack(side=RIGHT, fill=Y)
-        self.listbox_today = Listbox(self.todaylist,bg="white",fg="black",height=16,width=40,font='Calibri',yscrollcommand= self.today_scrollbar.set, selectmode=MULTIPLE)
+        self.listbox_today = Listbox(self.todaylist,bg="#F0FFFF",fg="black",height=16,width=40,font='Calibri',yscrollcommand= self.today_scrollbar.set, selectmode=MULTIPLE)
 
         self.today_scrollbar.config(command=self.listbox_today.yview)
         #self.listbox_today.place(relx=0.03, rely=0.1) 
@@ -741,31 +795,46 @@ class dataEdit:
 
     @classmethod
     def windowBin(self):
-        self.winBin = Tk()
+        self.winBin = Toplevel()
         self.winBin.title("Trash")
         self.winBin.geometry("435x480")
+        self.winBin.config(bg="#6fa0c6")
 
         self.winBinlist= Frame(self.winBin)
         self.winBinlist.pack()        
         self.winBinlist.place(relx=0.03, rely=0.01)
+        self.winBinlist.config(bg="#6fa0c6")
         
-        self.name_winBin = Label(self.winBinlist, text='Trash', font=('Calibri', 16))
+        self.name_winBin = Label(self.winBinlist, text='Trash', font=('Calibri', 16), bg="#6fa0c6")
         self.name_winBin .place(relx=0.02, rely=0.01)
 
         '''self.bt_addOk = Button(winBin,text='Ok',font=('Calibri', 15),relief=RAISED,cursor="heart")
         self.bt_addOk.place(relx=0.82, rely=0.9, width=60, height=28)'''
-        self.bt_addrelist = Button(self.winBinlist,text='Restore List',font=('Calibri', 10),relief=RAISED,cursor="heart",command= self.sureRestore)
-        self.bt_addrelist.place(relx=0.58, rely=0.01, width=72, height=28)
 
-        self.bt_addreall = Button(self.winBinlist,text='Restore All',font=('Calibri', 10),relief=RAISED,cursor="heart",command= self.sureallRestore)
-        self.bt_addreall.place(relx=0.78, rely=0.01, width=72, height=28)
+        self.bt_addrelist = Image.open('todoPic/restorelist.png')
+        self.resize_addrelist = self.bt_addrelist.resize((85,31),Image.ANTIALIAS)
+        self.bt_newaddrelist = ImageTk.PhotoImage(self.resize_addrelist)
+        self.bttn_addrelist = Button(self.winBinlist,image = self.bt_newaddrelist,cursor="heart", bg='#6fa0c6', command = self.sureRestore , borderwidth=0)
+        self.bttn_addrelist.place(relx=0.52, rely=0.01, width=85, height=30)
 
-        self.bt_addreall = Button(self.winBinlist,text='Permanent Delete',font=('Calibri', 10),relief=RAISED,cursor="heart", command=self.sureperDel)
-        self.bt_addreall.place(relx=0.31, rely=0.01, width=100, height=28)
+        self.bt_addreall = Image.open('todoPic/restoreall.png')
+        self.resize_addreall = self.bt_addreall.resize((85,31),Image.ANTIALIAS)
+        self.bt_newaddreall = ImageTk.PhotoImage(self.resize_addreall)
+        self.bttn_addreall = Button(self.winBinlist,image = self.bt_newaddreall,cursor="heart", bg='#6fa0c6', command = self.sureallRestore , borderwidth=0)
+        self.bttn_addreall.place(relx=0.75, rely=0.01, width=85, height=30)
+
+        self.bt_addperdel = Image.open('todoPic/perdelete.png')
+        self.resize_addperdel = self.bt_addperdel.resize((130,31),Image.ANTIALIAS)
+        self.bt_newaddperdel = ImageTk.PhotoImage(self.resize_addperdel)
+        self.bttn_addperdel = Button(self.winBinlist,image = self.bt_newaddperdel,cursor="heart", bg='#6fa0c6', command = self.sureperDel , borderwidth=0)
+        self.bttn_addperdel.place(relx=0.18, rely=0.01, width=130, height=30)
+
+        # self.bt_addreall = Button(self.winBinlist,text='Permanent Delete',font=('Calibri', 10),relief=RAISED,cursor="heart", command=self.sureperDel)
+        # self.bt_addreall.place(relx=0.31, rely=0.01, width=100, height=28)
 
         self.winBin_scrollbar = Scrollbar(self.winBinlist, orient=VERTICAL)
         self.winBin_scrollbar.pack(side=RIGHT, fill=Y)
-        self.listbox_winBin = Listbox(self.winBinlist,bg="white",fg="black",height=16,width=40,font='Calibri',yscrollcommand= self.winBin_scrollbar.set, selectmode=MULTIPLE)
+        self.listbox_winBin = Listbox(self.winBinlist,bg="#F0FFFF",fg="black",height=16,width=40,font='Calibri',yscrollcommand= self.winBin_scrollbar.set, selectmode=MULTIPLE)
 
         self.winBin_scrollbar.config(command=self.listbox_winBin.yview)
         #self.listbox_winBin.place(relx=0.03, rely=0.1) 
@@ -834,18 +903,26 @@ class dataEdit:
     @classmethod
     def sureperDel(self):
         if self.listbox_winBin.curselection():
-            self.sure_perDel = Tk()
+            self.sure_perDel = Toplevel()
             self.sure_perDel.title("Are you sure?")
             self.sure_perDel.geometry("460x90")
+            self.sure_perDel.config(bg="#6fa0c6")
         
-            self.lb_perDel = Label(self.sure_perDel, text='Do you want to permanently delete this REMINDER?', font=('Calibri', 14))
+            self.lb_perDel = Label(self.sure_perDel, text='Do you want to permanently delete this REMINDER?', font=('Calibri', 14), bg="#6fa0c6")
             self.lb_perDel.place(relx=0.06, rely=0.03)
-        
-            self.bt_sureperDel = Button(self.sure_perDel,text='Yes',font=('Calibri', 15),relief=RAISED,cursor="heart", command = self.perDel)
-            self.bt_sureperDel.place(relx=0.3, rely=0.5, width=60, height=28)
 
-            self.bt_notperDel = Button(self.sure_perDel,text='No',font=('Calibri', 15),relief=RAISED,cursor="heart", command = self.notperDel)
-            self.bt_notperDel.place(relx=0.5, rely=0.5, width=60, height=28)
+            self.bt_addsureperDel = Image.open('todoPic/yes.png')
+            self.resize_addsureperDel = self.bt_addsureperDel.resize((70,31),Image.ANTIALIAS)
+            self.bt_newsureperDel = ImageTk.PhotoImage(self.resize_addsureperDel)
+            self.bttn_addsureperDel = Button(self.sure_perDel, image = self.bt_newsureperDel,cursor="heart", bg='#6fa0c6', command = self.perDel , borderwidth=0)
+            self.bttn_addsureperDel.place(relx=0.32, rely=0.5, width=70, height=30)
+
+            self.bt_addnotperDel = Image.open('todoPic/no.png')
+            self.resize_addnotperDel = self.bt_addnotperDel.resize((70,31),Image.ANTIALIAS)
+            self.bt_newnotperDel = ImageTk.PhotoImage(self.resize_addnotperDel)
+            self.bttn_addnotperDel = Button(self.sure_perDel, image = self.bt_newnotperDel,cursor="heart", bg='#6fa0c6', command = self.notperDel , borderwidth=0)
+            self.bttn_addnotperDel.place(relx=0.53, rely=0.5, width=70, height=30)
+
             self.sure_perDel.mainloop()
 
         else:
