@@ -158,7 +158,7 @@ class MainPage:
 
 
         #Label in window
-        self.lb_myl = Label(main_page, text='My Lists', bg='#6fa0c6', fg='#FBE7A1', font=('Calibri', 35, 'bold'))
+        self.lb_myl = Label(main_page, text='My Lists', bg='#6fa0c6', fg='black', font=('Calibri', 35))
         self.lb_myl.place(relx=0.025, rely=0.02)
 
         self.listbox_list.bind('<Double-1>', lambda event :dataManage.dataEdit.changeWindow())
@@ -179,11 +179,8 @@ class MainPage:
         self.scrollbar_comp.config(command=self.listbox_complete.yview)      
         self.listbox_complete.pack(pady=15)
 
-        self.lb_myl = Label(main_page, text='COMPLETE', bg='#6fa0c6', fg='#FBE7A1', font=('Calibri', 15, 'bold'))
+        self.lb_myl = Label(main_page, text='COMPLETE', bg='#6fa0c6', fg='black', font=('Calibri', 15))
         self.lb_myl.place(relx=0.025, rely=0.56)
-
-        # self.lb_myl = Label(main_page, text='COMPLETE', font=('Calibri', 16))
-        # self.lb_myl.place(relx=0.025, rely=0.52)
 
         # sd = dataManage.dataEdit.showdata()
 
@@ -194,6 +191,7 @@ class MainPage:
         # filemenu.add_command(label="Save",command=dataManage.dataEdit.save_list)
         filemenu.add_command(label="Save", command= self.save_list)
         filemenu.add_command(label="Open", command= self.open_file)
+        filemenu.add_command(label="User", command = userManage.userEdit.userWin)
         filemenu.add_command(label="Logout", command = userManage.userEdit.backtoLogin)
         menubar.add_cascade(label="File",menu=filemenu)
         # menubar.add_cascade(label="Logout",menu=logoutmenu, command = dataManage.dataEdit.save_list)

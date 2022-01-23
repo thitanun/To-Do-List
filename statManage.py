@@ -76,7 +76,7 @@ class statEdit:
                             d_strftime = d.strftime("%d/%m/%Y")
                             d_strptime = datetime.strptime(d_strftime,"%d/%m/%Y")
                             if d_strptime == daytime_new_value:
-                                self.list_late_week += 1                           
+                                self.list_late_week += 1                              
                     self.list_all_data = value
             if user == self.todo and len(value) == 0:
                     self.list_all_data = []
